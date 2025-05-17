@@ -68,31 +68,41 @@ namespace IA
             var messageServer = this.RecevoirMessage();
             if (messageServer != "NOM_EQUIPE")
             {
-                throw new InvalidOperationException("Erreur nomEquipe "+messageServer);
+                throw new InvalidOperationException("Erreur nomEquipe " + messageServer);
             }
             this.EnvoyerMessage("Oskour");
             messageServer = this.RecevoirMessage();
-            if ( !messageServer.StartsWith("Bonjour"))
+            if (!messageServer.StartsWith("Bonjour"))
             {
-                throw new InvalidOperationException("Erreur bienvenue"+ messageServer);
+                throw new InvalidOperationException("Erreur bienvenue" + messageServer);
             }
 
-            return int.Parse(messageServer.Split("|")[1]); 
+            return int.Parse(messageServer.Split("|")[1]);
 
         }
 
 
-        public void AttenteDebutTour()
+        public Tour AttenteDebutTour()
         {
             var messageServer = this.RecevoirMessage();
-            if (messageServer.StartsWith("DEBUT_TOUR")) {
-                if (messageServer.Equals("FIN"))
+            if (!messageServer.StartsWith("DEBUT_TOUR"))
+            {
+                if (messageServer == "FIN")
                 {
-                    return;
-                }  
+                    return new Tour
+                    {
+                        NumeroTour = -1,
+                    }; 
+                }
                 throw new InvalidOperationException(messageServer);
             }
-                    
+            var info = messageServer.Split("|");
+            return new Tour
+            {
+                NumeroTour = int.Parse(info[1]),
+                Phase = int.Parse(info[2]),
+            };
+
         }
 
         public int DegatsDR()
@@ -102,24 +112,72 @@ namespace IA
             return Convert.ToInt32(messageServer);
         }
 
-        public bool Piocher(int numeroCarte, int idJoueur)
+        public bool Piocher(int numeroCarte, int? idJoueur)
         {
-            return true; 
-        }      
-
-        public bool Utiliser(TypeDeCarte type) {
-            return true;
+            var message = $"PIOCHER|{numeroCarte}";
+            if (idJoueur.HasValue)
+            {
+                message += $"|{idJoueur}";
+            }
+            this.EnvoyerMessage(message);
+            var reponse = this.RecevoirMessage();
+            if (reponse == "OK")
+            {
+                return true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(reponse);
+                Console.ResetColor();
+               
+                return false;
+            }
         }
 
-        public bool Attaquer (int idMonstre)
+        public bool Utiliser(TypeDeCarte type)
         {
-            return true;
+            var message = $"UTILISER|{(int)type}"; 
+            this.EnvoyerMessage(message);
+            var reponse = this.RecevoirMessage();
+
+            if (reponse == "OK")
+            {
+                return true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(reponse);
+                Console.ResetColor();
+                
+                return false;
+            }
+        }
+
+        public bool Attaquer(int idMonstre)
+        {
+
+            var message = $"ATTAQUER|{idMonstre}";
+            var reponse = this.RecevoirMessage();
+            if (reponse == "OK")
+            {
+                return true;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(reponse);
+                Console.ResetColor();
+                return false;
+            }
         }
 
         public IEnumerable<Perso> GetJoueurs()
         {
+
             return Enumerable.Empty<Perso>();
-        } 
+        }
 
         public Joueur GetJoueur()
         {
