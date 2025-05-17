@@ -60,7 +60,7 @@ namespace IA
 
 
                 //Utilisation de la défense pour tanker l'attaque de la dame en rouge
-                if (this.tourActuel.Phase == 15)
+                if (this.tourActuel.Phase == 15 && this.joueur.Pv>200)
                 {
                     this.Utiliser(TypeDeCarte.DEFENSE);
                 }
@@ -333,7 +333,7 @@ namespace IA
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
                 case "attaquer": {
-                        this.Utiliser(TypeDeCarte.ATTAQUE);
+                        if (this.listMonstres[monstreAttaque].Vie > this.joueur.Attaque) this.Utiliser(TypeDeCarte.ATTAQUE);
                         this.server.Attaquer(monstreAttaque); 
                     }
                     break;
