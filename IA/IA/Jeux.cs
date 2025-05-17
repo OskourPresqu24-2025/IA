@@ -45,12 +45,33 @@ namespace IA
         public void JouerPhase()
         {
             this.tourActuel = this.server.AttenteDebutTour();
+            if (this.tourActuel.NumeroTour != -1)
+            {
+
+
+                this.JouerPhase();
+            }
         }
 
 
         public int ChoixPioche()
         {
-            return 0; // A changer
+            int choix = -1;
+            bool definitif = false;
+            for (int i = 0; i < this.pioche.Count; i++)
+            {
+                if (this.pioche[i].Valeur == 5)
+                {
+                    choix = i;
+                    definitif = true;
+                }
+                else if(this.pioche[i].Valeur >2 && this.pioche[i].Type != TypeDeCarte.ATTAQUE && !definitif)
+                {
+                    choix=i;
+                }
+            }
+            if (choix == -1) choix = 1;
+            return choix;
         }
 
         public void NouveauTour()
@@ -65,7 +86,7 @@ namespace IA
 
         public void NouvellePhase()
         {
-            // A appeler a chaque phase
+            this.pioche = this.server.GetPioche().ToList();
         }
 
     }

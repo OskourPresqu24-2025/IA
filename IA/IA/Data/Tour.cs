@@ -19,10 +19,6 @@ namespace IA.Data
                 {
                     return TypeJour.NUIT;
                 }
-                else if (Phase == 16)
-                {
-                    return TypeJour.LUNESANG;
-                }
                 else
                 {
                     return TypeJour.JOUR;
