@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace IA
 {
@@ -44,7 +46,7 @@ namespace IA
         /// <param name="message">Le message à envoyer</param>
         public void EnvoyerMessage(string message)
         {
-            Console.WriteLine(">>" + message);
+            Console.WriteLine(">> " + message);
             this.fluxSortant.WriteLine(message);
         }
 
@@ -92,7 +94,7 @@ namespace IA
                     return new Tour
                     {
                         NumeroTour = -1,
-                    }; 
+                    };
                 }
                 throw new InvalidOperationException(messageServer);
             }
@@ -130,14 +132,14 @@ namespace IA
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(reponse);
                 Console.ResetColor();
-               
+
                 return false;
             }
         }
 
         public bool Utiliser(TypeDeCarte type)
         {
-            var message = $"UTILISER|{(int)type}"; 
+            var message = $"UTILISER|{(int)type}";
             this.EnvoyerMessage(message);
             var reponse = this.RecevoirMessage();
 
@@ -150,14 +152,13 @@ namespace IA
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(reponse);
                 Console.ResetColor();
-                
+
                 return false;
             }
         }
 
         public bool Attaquer(int idMonstre)
         {
-
             var message = $"ATTAQUER|{idMonstre}";
             var reponse = this.RecevoirMessage();
             if (reponse == "OK")
@@ -176,22 +177,91 @@ namespace IA
         public IEnumerable<Perso> GetJoueurs()
         {
 
-            return Enumerable.Empty<Perso>();
+            this.EnvoyerMessage("JOUEURS");
+            var reponse = this.RecevoirMessage();
+
+            var joueurs = reponse.Split("|");
+            List<Perso> listeJoueurs = new List<Perso>();
+
+            for (int i = 0; i < joueurs.Length; i += 4)
+            {
+                listeJoueurs.Add(new Perso
+                {
+                    Pv = int.Parse(joueurs[i]),
+                    Def = int.Parse(joueurs[i + 1]),
+                    Attaque = int.Parse(joueurs[i + 2]),
+                    Savoir = int.Parse(joueurs[i + 3])
+                });
+            }
+
+            return listeJoueurs;
+
         }
 
-        public Joueur GetJoueur()
+        public Perso GetJoueur()
         {
-            return new Joueur();
+            this.EnvoyerMessage("MOI");
+            var reponse = this.RecevoirMessage();
+            var joueur = reponse.Split("|");
+
+            Perso perso = new Perso()
+            {
+                Pv = int.Parse(joueur[0]),
+                Def = int.Parse(joueur[1]),
+                Attaque = int.Parse(joueur[2]),
+                Savoir = int.Parse(joueur[3])
+            };
+            return perso;
+
         }
 
         public IEnumerable<Monstre> GetMonstres()
         {
-            return Enumerable.Empty<Monstre>();
+            this.EnvoyerMessage("MONSTRES");
+            var reponse = this.RecevoirMessage();
+            var monstre = reponse.Split("|");
+            List<Monstre> listeMonstres = new List<Monstre>();
+            for (int i = 0; i < monstre.Length; i += 2)
+            {
+                listeMonstres.Add(new Monstre
+                {
+                    Vie = int.Parse(monstre[i]),
+                    PointSavoir = int.Parse(monstre[i + 1])
+                });
+            }
+            return listeMonstres;
         }
 
         public IEnumerable<Carte> GetPioche()
         {
-            return Enumerable.Empty<Carte>();
+            this.EnvoyerMessage("PIOCHES");
+            var reponse = this.RecevoirMessage();
+            var cartes = reponse.Split("|");
+            List<Carte> listePioche = new List<Carte>();
+            for (int i = 0; i < cartes.Length; i += 2)
+            {
+                listePioche.Add(new Carte
+                {
+                    Type = GetTypeDeCarteFromString(cartes[i]),
+                    Valeur = int.Parse(cartes[i + 1]),
+                });
+            }
+            return listePioche;
+        }
+
+        private TypeDeCarte GetTypeDeCarteFromString(string type)
+        {
+            switch (type)
+            {
+                case "ATTAQUE":
+                    return TypeDeCarte.ATTAQUE;
+                case "DEFENSE":
+                    return TypeDeCarte.DEFENSE;
+                case "SAVOIR":
+                    return TypeDeCarte.SAVOIR;
+                default:
+                    throw new ArgumentException("Type de carte inconnu : " + type);
+            }
         }
     }
 }

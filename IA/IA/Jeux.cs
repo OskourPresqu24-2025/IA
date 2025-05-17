@@ -13,6 +13,7 @@ namespace IA
         private Server server;
         private int numJoueur;
         private Joueur joueur;
+        private bool choisiDef;
         #endregion
 
         #region Constructeur
@@ -22,6 +23,7 @@ namespace IA
             listPersos = new List<Perso>();
             listMonstres = new List<Monstre>();
             this.server = server;
+            this.choisiDef = false;
         }
         #endregion
 
@@ -76,12 +78,14 @@ namespace IA
 
         public void NouveauTour()
         {
-            // A appeler a chaque tour
+            this.attaqueLune = this.server.DegatsDR();
         }
 
         public void NouveauJour()
         {
-            // A appeler a chaque jour
+            this.joueur = this.server.GetJoueur();
+            this.listMonstres = this.server.GetMonstres().ToList();
+            this.choisiDef = false;
         }
 
         public void NouvellePhase()
