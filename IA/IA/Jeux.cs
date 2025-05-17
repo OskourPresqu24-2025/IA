@@ -100,22 +100,37 @@ namespace IA
                 // Plusieurs à 5
                 if (carteCinq.Count() > 1)
                 {
-                    // Type Savoir
-                    rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.SAVOIR);
+                    if (this.tourActuel.NumeroTour < 7)
+                    {
+                        rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.ATTAQUE);
+                    }
+                    else
+                    {
+                        // Type Defense
+                        rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.DEFENSE);
+                    }
+                    
                     if (carteCinq == null)
                     {
-                        // Type Défense
-                        rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.DEFENSE);
+                        if (this.tourActuel.NumeroTour < 7)
+                        {
+                            rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.DEFENSE);
+                        }
+                        else
+                        {
+                            // Type Defense
+                            rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.ATTAQUE);
+                        }
 
-                        // Type Attaque
+                        // Type SAVOIR
                         if (rep == null)
                         {
                             rep = carteCinq.First();
                         }
-                        else
-                        {
-                            choisiDef = true;
-                        }
+                    }
+                    else
+                    {
+                        choisiDef = true;
                     }
                 }
                 // Une seule à 5
@@ -131,14 +146,30 @@ namespace IA
                 {
                     if (carteOk.Count() > 1)
                     {
-                        // Type Savoir
-                        var repList = carteOk.Where(p => p.Type == TypeDeCarte.SAVOIR);
+                        var repList = carteOk;
+                        if (this.tourActuel.NumeroTour < 5)
+                        {
+                            // Type Defense
+                            repList = carteOk.Where(p => p.Type == TypeDeCarte.ATTAQUE);
+                        }
+                        else
+                        {
+                            repList = carteOk.Where(p=> p.Type == TypeDeCarte.DEFENSE);
+                        }
+                        
                         if (repList.Count() == 0)
                         {
-                            // Type Défense
-                            repList = carteOk.Where(p => p.Type == TypeDeCarte.DEFENSE);
+                            if (this.tourActuel.NumeroTour < 5)
+                            {
+                                // Type Defense
+                                repList = carteOk.Where(p => p.Type == TypeDeCarte.DEFENSE);
+                            }
+                            else
+                            {
+                                repList = carteOk.Where(p => p.Type == TypeDeCarte.ATTAQUE);
+                            }
 
-                            // Type Attaque
+                            // Type Savoir
                             if (repList.Count() == 0)
                             {
                                 rep = carteOk.MaxBy(p => p.Valeur);
@@ -146,12 +177,13 @@ namespace IA
                             else
                             {
                                 rep = repList.MaxBy(p => p.Valeur);
-                                choisiDef = true;
+                                
                             }
                         }
                         else
                         {
                             rep = repList.MaxBy(p => p.Valeur);
+                            choisiDef = true;
                         }
                     }
                     else
@@ -160,10 +192,10 @@ namespace IA
                     }
                 }
                 // Si attaque ou pas de valeur haute
-                var carteMeh = this.pioche.Where(p => p.Valeur >1);
+                var carteMeh = this.pioche.Where(p => p.Valeur >2);
                 if (carteMeh.Count() > 0 && rep == null)
                 {
-                    rep = carteMeh.MaxBy(p => p.Valeur);
+                    rep = carteMeh.Where(p=> p.Type != TypeDeCarte.SAVOIR).MaxBy(p => p.Valeur);
                 }
                 else
                 {
