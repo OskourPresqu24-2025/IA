@@ -139,7 +139,7 @@ namespace IA
 
         public bool Utiliser(TypeDeCarte type)
         {
-            var message = $"UTILISER|{(int)type}";
+            var message = $"UTILISER|{GetTypeDeCarteToString(type)}";
             this.EnvoyerMessage(message);
             var reponse = this.RecevoirMessage();
 
@@ -259,6 +259,20 @@ namespace IA
                     return TypeDeCarte.DEFENSE;
                 case "SAVOIR":
                     return TypeDeCarte.SAVOIR;
+                default:
+                    throw new ArgumentException("Type de carte inconnu : " + type);
+            }
+        }
+        private string GetTypeDeCarteToString(TypeDeCarte type)
+        {
+            switch (type)
+            {
+                case TypeDeCarte.ATTAQUE:
+                    return "ATTAQUE";
+                case TypeDeCarte.DEFENSE:
+                    return "DEFENSE";
+                case TypeDeCarte.SAVOIR:
+                    return "SAVOIR";
                 default:
                     throw new ArgumentException("Type de carte inconnu : " + type);
             }
