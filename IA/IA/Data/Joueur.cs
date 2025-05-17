@@ -8,6 +8,9 @@
         public Joueur()
         {
             valeurCarte = new Dictionary<TypeDeCarte, List<Carte>>();
+            valeurCarte[TypeDeCarte.ATTAQUE] = new List<Carte>();
+            valeurCarte[TypeDeCarte.DEFENSE] = new List<Carte>();
+            valeurCarte[TypeDeCarte.SAVOIR] = new List<Carte>();
         }
 
         public int Position
@@ -15,6 +18,8 @@
             get => position;
             set => position = value;
         }
+
+        public Dictionary<TypeDeCarte, List<Carte>> DicoCarte => valeurCarte;
 
         public int ValeurCartes(TypeDeCarte type)
         {

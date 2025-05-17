@@ -63,6 +63,7 @@ namespace IA
                 if (this.tourActuel.Phase == 15)
                 {
                     this.server.Utiliser(TypeDeCarte.DEFENSE);
+                    this.joueur.DicoCarte[TypeDeCarte.DEFENSE].Clear();
                 }
                 
                 if(this.tourActuel.Etat == TypeJour.NUIT)
@@ -176,6 +177,11 @@ namespace IA
             }
             if (choix == -1) choix = 1;
             int[] aReturn = [choix, cible];
+
+            if (cible == this.numJoueur)
+            {
+                this.joueur.DicoCarte[rep.Type].Add(rep);
+            }
             return aReturn;
         }
 
@@ -279,10 +285,16 @@ namespace IA
             switch (action)
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
-                case "attaquer": this.server.Attaquer(monstreAttaque); break;
+                case "attaquer": {
+                        this.server.Utiliser(TypeDeCarte.ATTAQUE);
+                        this.joueur.DicoCarte[TypeDeCarte.ATTAQUE].Clear();
+                        this.server.Attaquer(monstreAttaque); 
+                    }
+                    break;
                 case "prendre savoir":
                     {
                         this.server.Utiliser(TypeDeCarte.SAVOIR);
+                        this.joueur.DicoCarte[TypeDeCarte.SAVOIR].Clear();
                         int[] piocher = this.ChoixPioche();
                         this.server.Piocher(piocher[0], piocher[1]);
                     }
