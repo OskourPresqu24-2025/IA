@@ -1,6 +1,4 @@
 ﻿using IA.Data;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace IA
 {
@@ -356,8 +354,8 @@ namespace IA
             return (meilleurCardIdx, meilleurOppId);
         }
 
-
+        #endregion
     }
 }
-    #endregion
-}
+    
+
