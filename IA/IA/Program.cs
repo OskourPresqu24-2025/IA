@@ -8,4 +8,5 @@ Console.WriteLine("Hello, World!");
 
 
 Server server = new Server();
+Jeux ia = new Jeux(server);
 Console.WriteLine (server.ConnexionPartie()) ;

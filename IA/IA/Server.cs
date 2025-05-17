@@ -84,5 +84,12 @@ namespace IA
         {
                 
         }
+
+        public int DegatsDR()
+        {
+            this.EnvoyerMessage("DEGATS");
+            string messageServer = this.RecevoirMessage();
+            return Convert.ToInt32(messageServer);
+        }
     }
 }
