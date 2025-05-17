@@ -30,11 +30,7 @@ namespace IA
         }
         #endregion
 
-        public void initTour()
-        {
-            //MAJ info
-        }
-
+        #region methodes
         public void Jouer()
         {
             this.numJoueur = this.server.ConnexionPartie();
@@ -42,17 +38,35 @@ namespace IA
 
         }
 
-        public void Init()
-        {
-            //A faire tour 1-1
-        }
-
         public void JouerPhase()
         {
             this.tourActuel = this.server.AttenteDebutTour();
             if (this.tourActuel.NumeroTour != -1)
             {
+                if(this.tourActuel.Phase == 0)
+                {
+                    this.NouveauTour();
+                }
 
+                if ((this.tourActuel.Phase%4) == 0)
+                {
+                    this.NouveauJour();
+                }
+
+                if (this.tourActuel.Etat == TypeJour.NUIT) 
+                { 
+                    this.NouvelleNuit();
+                }
+
+                this.NouvellePhase();
+
+
+                //Utilisation de la défense pour tanker l'attaque de la dame en rouge
+                if (this.tourActuel.Phase == 15)
+                {
+                    this.server.Utiliser(TypeDeCarte.DEFENSE);
+                }
+                this.JouerNuit();
 
                 this.JouerPhase();
             }
@@ -138,9 +152,13 @@ namespace IA
 
         public void NouvelleNuit()
         {
-            string action = "";
             this.joueur = this.server.GetJoueur();
             this.listMonstres = this.server.GetMonstres().ToList();
+        }
+
+        public void JouerNuit()
+        {
+            string action = "";
             int monstreAttaque = -1;
 
             //Prend le malus si il est elevé et totalement utilisé par les stats d'un adversaire
@@ -194,7 +212,7 @@ namespace IA
             //Attaque si on peut oneshot le mob ou si il est low
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
-                if ((this.joueur.TotalAttaque() > listMonstres[i].Vie) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
+                if (((this.joueur.TotalAttaque() > listMonstres[i].Vie) && (listMonstres[i].Vie != 0)) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
                 {
                     action = "attaquer";
                     monstreAttaque = i;
@@ -202,7 +220,7 @@ namespace IA
             }
 
             //Utilisation de la défense pour tanker l'attaque de la dame en rouge
-            if (this.tourActuel.Phase == 15)
+            if(this.tourActuel.Phase == 15)
             {
                 action = "dernière nuit";
             }
@@ -288,4 +306,5 @@ namespace IA
 
         }
     }
+    #endregion
 }
