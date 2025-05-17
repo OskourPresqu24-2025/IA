@@ -241,7 +241,11 @@ namespace IA
                 case "attaquer": this.server.Attaquer(monstreAttaque); break;
                 case "prendre savoir": this.server.Utiliser(TypeDeCarte.SAVOIR); break;
                 case "dernière nuit": this.server.Utiliser(TypeDeCarte.DEFENSE); break;
-                case "pioche": this.server.Piocher(this.ChoixPioche(), numJoueur); break;
+                case "pioche":
+                    {
+                        int[] piocher = this.ChoixPioche();
+                        this.server.Piocher(piocher[0], piocher[1]);
+                    } break;
             }
         }
         public (int, int)  GetMalus()
