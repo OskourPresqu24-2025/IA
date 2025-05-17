@@ -266,14 +266,8 @@ namespace IA
                 }
             }
 
-            //Utilisation de la défense pour tanker l'attaque de la dame en rouge
-            if(this.tourActuel.Phase == 15)
-            {
-                action = "dernière nuit";
-            }
-
             //Prend le savoir si on a assez pour gagner
-            if (this.joueur.TotalSavoir() > 2000)
+            if ((this.joueur.TotalSavoir() > 2000) || (this.joueur.Pv < this.attaqueLune))
             {
                 action = "prendre savoir";
             }
@@ -286,8 +280,13 @@ namespace IA
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
                 case "attaquer": this.server.Attaquer(monstreAttaque); break;
-                case "prendre savoir": this.server.Utiliser(TypeDeCarte.SAVOIR); break;
-                case "dernière nuit": this.server.Utiliser(TypeDeCarte.DEFENSE); break;
+                case "prendre savoir":
+                    {
+                        this.server.Utiliser(TypeDeCarte.SAVOIR);
+                        int[] piocher = this.ChoixPioche();
+                        this.server.Piocher(piocher[0], piocher[1]);
+                    }
+                    break;
                 case "pioche":
                     {
                         int[] piocher = this.ChoixPioche();
