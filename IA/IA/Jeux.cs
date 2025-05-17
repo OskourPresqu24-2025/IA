@@ -28,11 +28,7 @@ namespace IA
         }
         #endregion
 
-        public void initTour()
-        {
-            //MAJ info
-        }
-
+        #region methodes
         public void Jouer()
         {
             this.numJoueur = this.server.ConnexionPartie();
@@ -40,18 +36,27 @@ namespace IA
 
         }
 
-        public void Init()
-        {
-            //A faire tour 1-1
-        }
-
         public void JouerPhase()
         {
             this.tourActuel = this.server.AttenteDebutTour();
             if (this.tourActuel.NumeroTour != -1)
             {
+                if(this.tourActuel.Phase == 0)
+                {
+                    this.NouveauTour();
+                }
 
+                if ((this.tourActuel.Phase%4) == 0)
+                {
+                    this.NouveauJour();
+                }
 
+                if (this.tourActuel.Etat == TypeJour.NUIT) 
+                { 
+                    this.NouvelleNuit();
+                }
+
+                this.NouvellePhase();
                 this.JouerPhase();
             }
         }
@@ -221,8 +226,9 @@ namespace IA
                 case "prendre savoir":this.server.Utiliser(TypeDeCarte.SAVOIR);break;
                 case "dernière nuit": this.server.Utiliser(TypeDeCarte.DEFENSE); break;
                 case "pioche": this.server.Piocher(this.ChoixPioche(), numJoueur); break;
-    }
+            }
         }
 
     }
+    #endregion
 }
