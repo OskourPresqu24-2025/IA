@@ -126,8 +126,8 @@ namespace IA
             }
             else
             {
-                var carteOk = this.pioche.Where(p => p.Valeur > 2);
-                if (carteOk.Count() > 0 && carteOk.Any(p => p.Type != TypeDeCarte.ATTAQUE))
+                var carteOk = this.pioche.Where(p => p.Valeur > 3);
+                if (carteOk.Count() > 0)
                 {
                     if (carteOk.Count() > 1)
                     {
@@ -160,7 +160,7 @@ namespace IA
                     }
                 }
                 // Si attaque ou pas de valeur haute
-                var carteMeh = this.pioche.Where(p => p.Valeur >= 2 && p.Type == TypeDeCarte.ATTAQUE);
+                var carteMeh = this.pioche.Where(p => p.Valeur >1);
                 if (carteMeh.Count() > 0 && rep == null)
                 {
                     rep = carteMeh.MaxBy(p => p.Valeur);
