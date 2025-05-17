@@ -146,6 +146,12 @@ namespace IA
             this.listMonstres = this.server.GetMonstres().ToList();
             int monstreAttaque = -1;
 
+            //Utilisation de la défense pour tanker l'attaque de la dame en rouge
+            if (this.tourActuel.Phase == 15)
+            {
+                this.server.Utiliser(TypeDeCarte.DEFENSE);
+            }
+
             //Prend le malus si il est elevé et totalement utilisé par les stats d'un adversaire
             int carteMalus = -1;
             int idAdversaire = -1;
@@ -196,17 +202,11 @@ namespace IA
             //Attaque si on peut oneshot le mob ou si il est low
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
-                if ((this.joueur.TotalAttaque() > listMonstres[i].Vie) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
+                if (((this.joueur.TotalAttaque() > listMonstres[i].Vie)&&(listMonstres[i].Vie!=0)) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
                 {
                     action = "attaquer";
                     monstreAttaque = i;
                 }
-            }
-
-            //Utilisation de la défense pour tanker l'attaque de la dame en rouge
-            if(this.tourActuel.Phase == 15)
-            {
-                action = "dernière nuit";
             }
 
             //Prend le savoir si on a assez pour gagner
@@ -224,7 +224,6 @@ namespace IA
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
                 case "attaquer":this.server.Attaquer(monstreAttaque);break;
                 case "prendre savoir":this.server.Utiliser(TypeDeCarte.SAVOIR);break;
-                case "dernière nuit": this.server.Utiliser(TypeDeCarte.DEFENSE); break;
                 case "pioche": this.server.Piocher(this.ChoixPioche(), numJoueur); break;
             }
         }
