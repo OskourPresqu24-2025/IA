@@ -1,4 +1,6 @@
 ﻿using IA.Data;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace IA
 {
@@ -28,11 +30,7 @@ namespace IA
         }
         #endregion
 
-        public void initTour()
-        {
-            //MAJ info
-        }
-
+        #region methodes
         public void Jouer()
         {
             this.numJoueur = this.server.ConnexionPartie();
@@ -40,17 +38,35 @@ namespace IA
 
         }
 
-        public void Init()
-        {
-            //A faire tour 1-1
-        }
-
         public void JouerPhase()
         {
             this.tourActuel = this.server.AttenteDebutTour();
             if (this.tourActuel.NumeroTour != -1)
             {
+                if(this.tourActuel.Phase == 0)
+                {
+                    this.NouveauTour();
+                }
 
+                if ((this.tourActuel.Phase%4) == 0)
+                {
+                    this.NouveauJour();
+                }
+
+                if (this.tourActuel.Etat == TypeJour.NUIT) 
+                { 
+                    this.NouvelleNuit();
+                }
+
+                this.NouvellePhase();
+
+
+                //Utilisation de la défense pour tanker l'attaque de la dame en rouge
+                if (this.tourActuel.Phase == 15)
+                {
+                    this.server.Utiliser(TypeDeCarte.DEFENSE);
+                }
+                this.JouerNuit();
 
                 this.JouerPhase();
             }
@@ -64,7 +80,7 @@ namespace IA
             int cible = this.numJoueur;
 
             // Carte à 5
-            if (this.pioche.Any(p=> p.Valeur == 5))
+            if (this.pioche.Any(p => p.Valeur == 5))
             {
                 var carteCinq = this.pioche.Where(p => p.Valeur == 5);
 
@@ -72,14 +88,14 @@ namespace IA
                 if (carteCinq.Count() > 1)
                 {
                     // Type Savoir
-                    rep= carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.SAVOIR);
-                    if(carteCinq == null)
+                    rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.SAVOIR);
+                    if (carteCinq == null)
                     {
                         // Type Défense
                         rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.DEFENSE);
 
                         // Type Attaque
-                        if(rep == null)
+                        if (rep == null)
                         {
                             rep = carteCinq.First();
                         }
@@ -152,7 +168,7 @@ namespace IA
             int[] aReturn = [choix,cible];
             return aReturn;
         }
-           
+
 
         public void NouveauTour()
         {
@@ -173,9 +189,13 @@ namespace IA
 
         public void NouvelleNuit()
         {
-            string action = "";
             this.joueur = this.server.GetJoueur();
             this.listMonstres = this.server.GetMonstres().ToList();
+        }
+
+        public void JouerNuit()
+        {
+            string action = "";
             int monstreAttaque = -1;
 
             //Prend le malus si il est elevé et totalement utilisé par les stats d'un adversaire
@@ -183,8 +203,9 @@ namespace IA
             int idAdversaire = -1;
             for (int i = 0; i < this.pioche.Count; i++)
             {
-                for (int j = 0; this.listPersos.Count > 0; j++) {
-                    if(j != this.numJoueur)
+                for (int j = 0; this.listPersos.Count > 0; j++)
+                {
+                    if (j != this.numJoueur)
                     {
                         switch (this.pioche[i].Type)
                         {
@@ -228,7 +249,7 @@ namespace IA
             //Attaque si on peut oneshot le mob ou si il est low
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
-                if ((this.joueur.TotalAttaque() > listMonstres[i].Vie) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
+                if (((this.joueur.TotalAttaque() > listMonstres[i].Vie) && (listMonstres[i].Vie != 0)) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
                 {
                     action = "attaquer";
                     monstreAttaque = i;
@@ -254,12 +275,73 @@ namespace IA
             switch (action)
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
-                case "attaquer":this.server.Attaquer(monstreAttaque);break;
-                case "prendre savoir":this.server.Utiliser(TypeDeCarte.SAVOIR);break;
+                case "attaquer": this.server.Attaquer(monstreAttaque); break;
+                case "prendre savoir": this.server.Utiliser(TypeDeCarte.SAVOIR); break;
                 case "dernière nuit": this.server.Utiliser(TypeDeCarte.DEFENSE); break;
                 case "pioche": this.server.Piocher(this.ChoixPioche(), numJoueur); break;
-    }
+            }
+        }
+        public (int, int)  GetMalus()
+        {
+
+            var meilleurOppDef = (Id : -1, stat : -1 ); 
+            var meilleurOppAtk = ( Id : -1, stat :-1 ); 
+            var meilleurOppSav = ( Id : -1, stat :-1 ); 
+
+            for (int i = 0; i < this.listPersos.Count; i++)
+            {
+                if (i == this.numJoueur) continue;
+                var perso = listPersos[i]; 
+                if (perso.Attaque > meilleurOppAtk.stat)
+                {
+                    meilleurOppAtk = (i, perso.Attaque); 
+                }
+                if (perso.Def > meilleurOppDef.stat)
+                {
+                    meilleurOppDef = (i, perso.Def);
+                }
+                if (perso.Savoir > meilleurOppSav.stat)
+                {
+                    meilleurOppSav = (i, perso.Attaque);
+                }
+            }
+
+            double meilleurScore = double.MinValue;
+            int meilleurCardIdx = -1, meilleurOppId = -1;
+
+            for (int i = 0; i < pioche.Count; i++)
+            {
+                var card = pioche[i];
+                int oppIdx, oppStat;
+                switch (card.Type)
+                {
+                    case TypeDeCarte.ATTAQUE:
+                        (oppIdx, oppStat) = meilleurOppAtk; break;
+                    case TypeDeCarte.DEFENSE:
+                        (oppIdx, oppStat) = meilleurOppDef; break;
+                    case TypeDeCarte.SAVOIR:
+                        (oppIdx, oppStat) = meilleurOppSav; break;
+                    default:
+                        continue;
+                }
+
+                if (oppIdx < 0)
+                    continue; 
+
+                double score = -card.Valeur * oppStat;
+                if (score > meilleurScore)
+                {
+                    meilleurScore = score;
+                    meilleurCardIdx = i;
+                    meilleurOppId = oppIdx;
+                }
+            }
+
+            return (meilleurCardIdx, meilleurOppId);
         }
 
+
+        }
     }
+    #endregion
 }
