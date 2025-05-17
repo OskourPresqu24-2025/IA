@@ -256,11 +256,16 @@ namespace IA
                 {
                     if (j != this.numJoueur)
                     {
+                        if ((this.listPersos[j].Savoir + this.listMonstres[0].PointSavoir) > 2000)
+                        {
+                            this.Utiliser(TypeDeCarte.SAVOIR);
+                        }
+
                         switch (this.pioche[i].Type)
                         {
                             case TypeDeCarte.ATTAQUE:
                                 {
-                                    if ((this.pioche[i].Valeur < -23) && (this.listPersos[j].Attaque > 23))
+                                    if ((this.pioche[i].Valeur < -20) && (this.listPersos[j].Attaque > 20))
                                     {
                                         action = "malus";
                                         carteMalus = i;
@@ -270,7 +275,7 @@ namespace IA
                                 break;
                             case TypeDeCarte.DEFENSE:
                                 {
-                                    if ((this.pioche[i].Valeur < -23) && (this.listPersos[j].Def > 23))
+                                    if ((this.pioche[i].Valeur < -20) && (this.listPersos[j].Def > 20))
                                     {
                                         action = "malus";
                                         carteMalus = i;
@@ -280,7 +285,7 @@ namespace IA
                                 break;
                             case TypeDeCarte.SAVOIR:
                                 {
-                                    if ((this.pioche[i].Valeur < -23) && (this.listPersos[j].Savoir > 23))
+                                    if ((this.pioche[i].Valeur < -20) && (this.listPersos[j].Savoir > 20))
                                     {
                                         action = "malus";
                                         carteMalus = i;
@@ -295,10 +300,13 @@ namespace IA
                 }
             }
 
-            //Attaque si on peut oneshot le mob ou si il est low
+            //Attaque si on peut oneshot le mob ou si il est low et après le tour 4
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
-                if (((this.joueur.TotalAttaque() > listMonstres[i].Vie) && (listMonstres[i].Vie != 0)) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
+                if ((
+                    ((this.joueur.TotalAttaque() > listMonstres[i].Vie) && (listMonstres[i].Vie != 0)) 
+                    || (listMonstres[i].Vie < (listMonstres[i].Vie * (40 / 100))) 
+                    && (this.tourActuel.NumeroTour > 4)))
                 {
                     action = "attaquer";
                     monstreAttaque = i;
