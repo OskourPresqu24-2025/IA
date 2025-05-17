@@ -10,3 +10,19 @@ Console.WriteLine("Hello, World!");
 Server server = new Server();
 Jeux ia = new Jeux(server);
 Console.WriteLine (server.ConnexionPartie()) ;
+
+while(true)
+{
+    server.AttenteDebutTour();
+    server.GetJoueurs();
+    server.GetJoueur();
+    server.GetMonstres();
+    server.GetPioche();
+    server.Piocher(0, null);
+
+}
+server.AttenteDebutTour(); 
+server.GetJoueurs();
+server.GetJoueur();
+server.GetMonstres();
+server.GetPioche();
