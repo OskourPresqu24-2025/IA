@@ -1,6 +1,6 @@
 ﻿namespace IA.Data
 {
-    public  class Perso
+    public class Perso
     {
         private int pv;
         private int def;

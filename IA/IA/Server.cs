@@ -198,13 +198,13 @@ namespace IA
 
         }
 
-        public Perso GetJoueur()
+        public Joueur GetJoueur()
         {
             this.EnvoyerMessage("MOI");
             var reponse = this.RecevoirMessage();
             var joueur = reponse.Split("|");
 
-            Perso perso = new Perso()
+            Joueur perso = new Joueur()
             {
                 Pv = int.Parse(joueur[0]),
                 Def = int.Parse(joueur[1]),

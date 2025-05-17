@@ -60,21 +60,61 @@ namespace IA
         {
             int choix = -1;
             bool definitif = false;
-            for (int i = 0; i < this.pioche.Count; i++)
+            Carte? rep = null;
+
+            // Carte à 5
+            if (this.pioche.Any(p=> p.Valeur == 5))
             {
-                if (this.pioche[i].Valeur == 5)
+                var carteCinq = this.pioche.Where(p => p.Valeur == 5);
+
+                // Plusieurs à 5
+                if (carteCinq.Count() > 1)
                 {
-                    choix = i;
-                    definitif = true;
+                    // Type Savoir
+                    rep= carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.SAVOIR);
+                    if(carteCinq == null)
+                    {
+                        // Type Défense
+                        rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.DEFENSE);
+
+                        // Type Attaque
+                        if(rep == null)
+                        {
+                            rep = carteCinq.First();
+                        }
+                        else
+                        {
+                            choisiDef = true;
+                        }
+                    }
                 }
-                else if(this.pioche[i].Valeur >2 && this.pioche[i].Type != TypeDeCarte.ATTAQUE && !definitif)
+                // Une seule à 5
+                else
                 {
-                    choix=i;
+                    rep = carteCinq.First();
                 }
+                definitif = true;
             }
-            if (choix == -1) choix = 1;
+            else
+            {
+                var carteOk = this.pioche.Where(p => p.Valeur > 2);
+                if (carteOk.Count()>0)
+                /*
+                for (int i = 0; i < this.pioche.Count; i++)
+                {
+                    //Sinon SAV 3/4 -- Sinon DEF 3 / 4
+                    if (this.pioche[i].Valeur > 2 && this.pioche[i].Type != TypeDeCarte.ATTAQUE && !definitif)
+                    {
+                            choix = i;
+                    }
+                }
+                */
+                if (choix == -1) choix = 1;
+                
+            }
             return choix;
         }
+           
 
         public void NouveauTour()
         {
