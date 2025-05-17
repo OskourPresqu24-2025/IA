@@ -310,8 +310,8 @@ namespace IA
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
                 if 
-                    ((this.joueur.TotalAttaque() > listMonstres[i].Vie && listMonstres[i].Vie != 0) || (listMonstres[i].Vie < listMonstres[i].Vie * (70 / 100))
-                    && (this.tourActuel.NumeroTour > 4))
+                    (((this.joueur.TotalAttaque() > listMonstres[i].Vie && listMonstres[i].Vie != 0)
+                    && (this.tourActuel.NumeroTour > 5)) || this.joueur.Attaque>0)
                 {
                     action = "attaquer";
                     monstreAttaque = i;
@@ -332,7 +332,7 @@ namespace IA
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
                 case "attaquer": {
-                        if (this.listMonstres[monstreAttaque].Vie > this.joueur.Attaque) this.Utiliser(TypeDeCarte.ATTAQUE);
+                        if (this.listMonstres[monstreAttaque].Vie > this.joueur.Attaque && this.joueur.TotalAttaque() > this.listMonstres[monstreAttaque].Vie) this.Utiliser(TypeDeCarte.ATTAQUE);
                         this.server.Attaquer(monstreAttaque); 
                     }
                     break;
