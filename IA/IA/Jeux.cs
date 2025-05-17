@@ -73,11 +73,11 @@ namespace IA
         }
 
 
-        public int ChoixPioche()
+        public int[] ChoixPioche()
         {
             int choix = -1;
-            bool definitif = false;
             Carte? rep = null;
+            int cible = this.numJoueur;
 
             // Carte à 5
             if (this.pioche.Any(p => p.Valeur == 5))
@@ -110,26 +110,63 @@ namespace IA
                 {
                     rep = carteCinq.First();
                 }
-                definitif = true;
             }
             else
             {
                 var carteOk = this.pioche.Where(p => p.Valeur > 2);
-                if (carteOk.Count() > 0)
-                    /*
-                    for (int i = 0; i < this.pioche.Count; i++)
+                if (carteOk.Count()>0 && carteOk.Any(p=>p.Type!=TypeDeCarte.ATTAQUE)){
+                    if (carteOk.Count() > 1)
                     {
-                        //Sinon SAV 3/4 -- Sinon DEF 3 / 4
-                        if (this.pioche[i].Valeur > 2 && this.pioche[i].Type != TypeDeCarte.ATTAQUE && !definitif)
+                        // Type Savoir
+                        var repList = carteOk.Where(p => p.Type == TypeDeCarte.SAVOIR);
+                        if (repList.Count()==0)
                         {
-                                choix = i;
+                            // Type Défense
+                            repList = carteOk.Where(p => p.Type == TypeDeCarte.DEFENSE);
+
+                            // Type Attaque
+                            if (repList.Count() == 0)
+                            {
+                                rep = carteOk.MaxBy(p=>p.Valeur);
+                            }
+                            else
+                            {
+                                rep = repList.MaxBy(p => p.Valeur);
+                                choisiDef = true;
+                            }
+                        }
+                        else
+                        {
+                            rep = repList.MaxBy(p => p.Valeur);
                         }
                     }
-                    */
-                    if (choix == -1) choix = 1;
-
+                    else
+                    {
+                        rep = carteOk.First();
+                    }
+                }
+                // Si attaque ou pas de valeur haute
+                var carteMeh = this.pioche.Where(p => p.Valeur >= 2 && p.Type==TypeDeCarte.ATTAQUE);
+                if(carteMeh.Count() > 0 && rep==null){
+                    rep = carteMeh.MaxBy(p => p.Valeur);
+                }
+                else
+                {
+                    var malus = this.GetMalus()[0];
+                    choix = malus[0];
+                    cible = malus[1];
+                }
+                
+                
             }
-            return choix;
+            // Assignation num
+            if (rep != null)
+            {
+                choix = this.pioche.FindIndex(p => p == rep);
+            }
+            if (choix == -1) choix = 1;
+            int[] aReturn = [choix,cible];
+            return aReturn;
         }
 
 
