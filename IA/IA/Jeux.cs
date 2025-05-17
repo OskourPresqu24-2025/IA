@@ -43,18 +43,18 @@ namespace IA
             this.tourActuel = this.server.AttenteDebutTour();
             if (this.tourActuel.NumeroTour != -1)
             {
-                if(this.tourActuel.Phase == 0)
+                if (this.tourActuel.Phase == 0)
                 {
                     this.NouveauTour();
                 }
 
-                if ((this.tourActuel.Phase%4) == 0)
+                if ((this.tourActuel.Phase % 4) == 0)
                 {
                     this.NouveauJour();
                 }
 
-                if (this.tourActuel.Etat == TypeJour.NUIT) 
-                { 
+                if (this.tourActuel.Etat == TypeJour.NUIT)
+                {
                     this.NouvelleNuit();
                 }
 
@@ -114,12 +114,13 @@ namespace IA
             else
             {
                 var carteOk = this.pioche.Where(p => p.Valeur > 2);
-                if (carteOk.Count()>0 && carteOk.Any(p=>p.Type!=TypeDeCarte.ATTAQUE)){
+                if (carteOk.Count() > 0 && carteOk.Any(p => p.Type != TypeDeCarte.ATTAQUE))
+                {
                     if (carteOk.Count() > 1)
                     {
                         // Type Savoir
                         var repList = carteOk.Where(p => p.Type == TypeDeCarte.SAVOIR);
-                        if (repList.Count()==0)
+                        if (repList.Count() == 0)
                         {
                             // Type Défense
                             repList = carteOk.Where(p => p.Type == TypeDeCarte.DEFENSE);
@@ -127,7 +128,7 @@ namespace IA
                             // Type Attaque
                             if (repList.Count() == 0)
                             {
-                                rep = carteOk.MaxBy(p=>p.Valeur);
+                                rep = carteOk.MaxBy(p => p.Valeur);
                             }
                             else
                             {
@@ -146,8 +147,9 @@ namespace IA
                     }
                 }
                 // Si attaque ou pas de valeur haute
-                var carteMeh = this.pioche.Where(p => p.Valeur >= 2 && p.Type==TypeDeCarte.ATTAQUE);
-                if(carteMeh.Count() > 0 && rep==null){
+                var carteMeh = this.pioche.Where(p => p.Valeur >= 2 && p.Type == TypeDeCarte.ATTAQUE);
+                if (carteMeh.Count() > 0 && rep == null)
+                {
                     rep = carteMeh.MaxBy(p => p.Valeur);
                 }
                 else
@@ -156,8 +158,8 @@ namespace IA
                     choix = malus[0];
                     cible = malus[1];
                 }
-                
-                
+
+
             }
             // Assignation num
             if (rep != null)
@@ -165,7 +167,7 @@ namespace IA
                 choix = this.pioche.FindIndex(p => p == rep);
             }
             if (choix == -1) choix = 1;
-            int[] aReturn = [choix,cible];
+            int[] aReturn = [choix, cible];
             return aReturn;
         }
 
@@ -257,7 +259,7 @@ namespace IA
             }
 
             //Prend le savoir si on a assez pour gagner
-            if ((this.joueur.TotalSavoir() > 2000) || (this.joueur.Pv < this.attaqueLune))
+            if ((this.joueur.TotalSavoir() > 2000) || (this.joueur.Pv < this.attaqueLune && this.tourActuel.Phase == 15))
             {
                 action = "prendre savoir";
             }
@@ -281,23 +283,24 @@ namespace IA
                     {
                         int[] piocher = this.ChoixPioche();
                         this.server.Piocher(piocher[0], piocher[1]);
-                    } break;
+                    }
+                    break;
             }
         }
-        public (int, int)  GetMalus()
+        public (int, int) GetMalus()
         {
 
-            var meilleurOppDef = (Id : -1, stat : -1 ); 
-            var meilleurOppAtk = ( Id : -1, stat :-1 ); 
-            var meilleurOppSav = ( Id : -1, stat :-1 ); 
+            var meilleurOppDef = (Id: -1, stat: -1);
+            var meilleurOppAtk = (Id: -1, stat: -1);
+            var meilleurOppSav = (Id: -1, stat: -1);
 
             for (int i = 0; i < this.listPersos.Count; i++)
             {
                 if (i == this.numJoueur) continue;
-                var perso = listPersos[i]; 
+                var perso = listPersos[i];
                 if (perso.Attaque > meilleurOppAtk.stat)
                 {
-                    meilleurOppAtk = (i, perso.Attaque); 
+                    meilleurOppAtk = (i, perso.Attaque);
                 }
                 if (perso.Def > meilleurOppDef.stat)
                 {
@@ -329,7 +332,7 @@ namespace IA
                 }
 
                 if (oppIdx < 0)
-                    continue; 
+                    continue;
 
                 double score = -card.Valeur * oppStat;
                 if (score > meilleurScore)
@@ -344,7 +347,7 @@ namespace IA
         }
 
 
-        }
     }
+}
     #endregion
 }
