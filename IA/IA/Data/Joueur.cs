@@ -49,5 +49,20 @@
             }
             return (int)(res * multiplicateur);
         }
+
+        public int TotalAttaque()
+        {
+            return this.Attaque + ValeurCartes(TypeDeCarte.ATTAQUE);
+        }
+
+        public int TotalDefense()
+        {
+            return this.Def + ValeurCartes(TypeDeCarte.DEFENSE);
+        }
+
+        public int TotalSavoir()
+        {
+            return this.Savoir + ValeurCartes(TypeDeCarte.SAVOIR);
+        }
     }
 }
