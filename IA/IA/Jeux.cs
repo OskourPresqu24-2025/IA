@@ -62,8 +62,7 @@ namespace IA
                 //Utilisation de la défense pour tanker l'attaque de la dame en rouge
                 if (this.tourActuel.Phase == 15)
                 {
-                    this.server.Utiliser(TypeDeCarte.DEFENSE);
-                    this.joueur.DicoCarte[TypeDeCarte.DEFENSE].Clear();
+                    this.Utiliser(TypeDeCarte.DEFENSE);
                 }
                 
                 if(this.tourActuel.Etat == TypeJour.NUIT)
@@ -72,8 +71,7 @@ namespace IA
                 }
                 else
                 {
-                    int[] pioche = this.ChoixPioche();
-                    this.server.Piocher(pioche[0], pioche[1]);
+                    this.Piocher();
                 }
                 
 
@@ -82,14 +80,20 @@ namespace IA
         }
 
 
-        public int[] ChoixPioche()
+        public (int,int?) ChoixPioche()
         {
             int choix = -1;
             Carte? rep = null;
-            int cible = this.numJoueur;
+            int? cible = null;
 
+            if(this.tourActuel.Phase%4==2 && this.choisiDef == false)
+            {
+                rep  = this.pioche.Where(p => p.Type==TypeDeCarte.DEFENSE)
+                    .MaxBy(p => p.Valeur);
+                this.choisiDef = true;
+            }
             // Carte à 5
-            if (this.pioche.Any(p => p.Valeur == 5))
+            else if (this.pioche.Any(p => p.Valeur == 5))
             {
                 var carteCinq = this.pioche.Where(p => p.Valeur == 5);
 
@@ -176,13 +180,9 @@ namespace IA
                 choix = this.pioche.FindIndex(p => p == rep);
             }
             if (choix == -1) choix = 1;
-            int[] aReturn = [choix, cible];
+            rep = this.pioche[choix];
 
-            if (cible == this.numJoueur)
-            {
-                this.joueur.DicoCarte[rep.Type].Add(rep);
-            }
-            return aReturn;
+            return (choix,cible);
         }
 
 
@@ -193,7 +193,8 @@ namespace IA
 
         public void NouveauJour()
         {
-            this.joueur = this.server.GetJoueur();
+            
+            this.joueur = this.joueur.Copy(this.server.GetJoueur());
             this.listMonstres = this.server.GetMonstres().ToList();
             this.choisiDef = false;
         }
@@ -205,7 +206,7 @@ namespace IA
 
         public void NouvelleNuit()
         {
-            this.joueur = this.server.GetJoueur();
+            this.joueur = this.joueur.Copy(this.server.GetJoueur());
             this.listMonstres = this.server.GetMonstres().ToList();
         }
 
@@ -273,7 +274,7 @@ namespace IA
             }
 
             //Prend le savoir si on a assez pour gagner
-            if ((this.joueur.TotalSavoir() > 2000) || (this.joueur.Pv < this.attaqueLune && this.tourActuel.Phase == 15))
+            if ((this.joueur.TotalSavoir() > 2000 || (this.joueur.Pv < this.attaqueLune) && this.tourActuel.Phase == 15))
             {
                 action = "prendre savoir";
             }
@@ -286,23 +287,19 @@ namespace IA
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
                 case "attaquer": {
-                        this.server.Utiliser(TypeDeCarte.ATTAQUE);
-                        this.joueur.DicoCarte[TypeDeCarte.ATTAQUE].Clear();
+                        this.Utiliser(TypeDeCarte.ATTAQUE);
                         this.server.Attaquer(monstreAttaque); 
                     }
                     break;
                 case "prendre savoir":
                     {
-                        this.server.Utiliser(TypeDeCarte.SAVOIR);
-                        this.joueur.DicoCarte[TypeDeCarte.SAVOIR].Clear();
-                        int[] piocher = this.ChoixPioche();
-                        this.server.Piocher(piocher[0], piocher[1]);
+                        this.Utiliser(TypeDeCarte.SAVOIR);
+                        this.Piocher();
                     }
                     break;
                 case "pioche":
                     {
-                        int[] piocher = this.ChoixPioche();
-                        this.server.Piocher(piocher[0], piocher[1]);
+                        this.Piocher();
                     }
                     break;
             }
@@ -364,6 +361,23 @@ namespace IA
             }
 
             return (meilleurCardIdx, meilleurOppId);
+        }
+
+        public void Utiliser(TypeDeCarte type)
+        {
+            this.server.Utiliser(type);
+            this.joueur.DicoCarte[type].Clear();
+        }
+
+        public void Piocher()
+        {
+            var choix = this.ChoixPioche();
+            this.server.Piocher(choix.Item1, choix.Item2);
+            Carte carte = this.pioche[choix.Item1];
+            if (choix.Item2 == null)
+            {
+                this.joueur.DicoCarte[carte.Type].Add(carte);
+            }
         }
 
         #endregion

@@ -13,6 +13,17 @@
             valeurCarte[TypeDeCarte.SAVOIR] = new List<Carte>();
         }
 
+        public Joueur Copy(Joueur other)
+        {
+            Joueur aReturn = new Joueur();
+            aReturn.Pv = other.Pv;
+            aReturn.Savoir = other.Savoir;
+            aReturn.Attaque = other.Attaque;
+            aReturn.Def = other.Def;
+            aReturn.valeurCarte = this.valeurCarte;
+            return aReturn;
+        }
+
         public int Position
         {
             get => position;

@@ -160,6 +160,7 @@ namespace IA
         public bool Attaquer(int idMonstre)
         {
             var message = $"ATTAQUER|{idMonstre}";
+            this.EnvoyerMessage(message);
             var reponse = this.RecevoirMessage();
             if (reponse == "OK")
             {
