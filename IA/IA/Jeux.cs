@@ -9,11 +9,11 @@ namespace IA
         private List<Perso> listPersos;
         private List<Monstre> listMonstres;
         private int attaqueLune;
-        private int tour;
-        private int phase;
+        private Tour tourActuel;
         private Server server;
         private int numJoueur;
         private Joueur joueur;
+        private bool choisiDef;
         #endregion
 
         #region Constructeur
@@ -23,6 +23,7 @@ namespace IA
             listPersos = new List<Perso>();
             listMonstres = new List<Monstre>();
             this.server = server;
+            this.choisiDef = false;
         }
         #endregion
 
@@ -34,6 +35,7 @@ namespace IA
         public void Jouer()
         {
             this.numJoueur = this.server.ConnexionPartie();
+            this.JouerPhase();
 
         }
 
@@ -41,5 +43,34 @@ namespace IA
         {
             //A faire tour 1-1
         }
+
+        public void JouerPhase()
+        {
+            this.tourActuel = this.server.AttenteDebutTour();
+        }
+
+
+        public int ChoixPioche()
+        {
+            return 0; // A changer
+        }
+
+        public void NouveauTour()
+        {
+            this.attaqueLune = this.server.DegatsDR();
+        }
+
+        public void NouveauJour()
+        {
+            this.joueur = this.server.GetJoueur();
+            this.listMonstres = this.server.GetMonstres().ToList();
+            this.choisiDef = false;
+        }
+
+        public void NouvellePhase()
+        {
+            // A appeler a chaque phase
+        }
+
     }
 }
