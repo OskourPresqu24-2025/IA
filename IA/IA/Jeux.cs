@@ -44,7 +44,13 @@ namespace IA
 
         public void JouerPhase()
         {
-            // A appeler a chaque tour
+            this.tourActuel = this.server.AttenteDebutTour();
+        }
+
+
+        public int ChoixPioche()
+        {
+            return 0; // A changer
         }
 
         public void NouveauTour()

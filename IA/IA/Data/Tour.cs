@@ -10,5 +10,32 @@ namespace IA.Data
     {
         public int NumeroTour { get; set; }
         public int Phase { get; set; }
+
+        public TypeJour Etat
+        {
+            get
+            {
+                if ((Phase + 1) % 4 == 0)
+                {
+                    return TypeJour.NUIT;
+                }
+                else if (Phase == 16)
+                {
+                    return TypeJour.LUNESANG;
+                }
+                else
+                {
+                    return TypeJour.JOUR;
+                }
+            }
+        }
+
+        public int Jour
+        {
+            get
+            {
+                return (Phase / 4)+1;
+            }
+        }
     }
 }
