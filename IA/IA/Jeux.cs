@@ -66,7 +66,17 @@ namespace IA
                 {
                     this.server.Utiliser(TypeDeCarte.DEFENSE);
                 }
-                this.JouerNuit();
+                
+                if(this.tourActuel.Etat == TypeJour.NUIT)
+                {
+                    this.JouerNuit();
+                }
+                else
+                {
+                    int[] pioche = this.ChoixPioche();
+                    this.server.Piocher(pioche[0], pioche[1]);
+                }
+                
 
                 this.JouerPhase();
             }
@@ -154,9 +164,9 @@ namespace IA
                 }
                 else
                 {
-                    var malus = this.GetMalus()[0];
-                    choix = malus[0];
-                    cible = malus[1];
+                    var malus = this.GetMalus();
+                    choix = malus.Item1;
+                    cible = malus.Item2;
                 }
 
 
