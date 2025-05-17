@@ -60,7 +60,7 @@ namespace IA
 
 
                 //Utilisation de la défense pour tanker l'attaque de la dame en rouge
-                if (this.tourActuel.Phase == 15 && this.joueur.Pv>200)
+                if (this.tourActuel.Phase == 15 && this.joueur.Pv<200)
                 {
                     this.Utiliser(TypeDeCarte.DEFENSE);
                 }
@@ -309,10 +309,9 @@ namespace IA
             //Attaque si on peut oneshot le mob ou si il est low et après le tour 4
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
-                if ((
-                    ((this.joueur.TotalAttaque() > listMonstres[i].Vie) && (listMonstres[i].Vie != 0)) 
-                    || (listMonstres[i].Vie < (listMonstres[i].Vie * (40 / 100))) 
-                    && (this.tourActuel.NumeroTour > 4)))
+                if 
+                    ((this.joueur.TotalAttaque() > listMonstres[i].Vie && listMonstres[i].Vie != 0) || (listMonstres[i].Vie < listMonstres[i].Vie * (70 / 100))
+                    && (this.tourActuel.NumeroTour > 4))
                 {
                     action = "attaquer";
                     monstreAttaque = i;
