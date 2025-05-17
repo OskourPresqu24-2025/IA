@@ -100,7 +100,7 @@ namespace IA
                 // Plusieurs à 5
                 if (carteCinq.Count() > 1)
                 {
-                    if (this.tourActuel.NumeroTour < 7)
+                    if (this.tourActuel.NumeroTour < 10)
                     {
                         rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.ATTAQUE);
                     }
@@ -112,7 +112,7 @@ namespace IA
                     
                     if (carteCinq == null)
                     {
-                        if (this.tourActuel.NumeroTour < 7)
+                        if (this.tourActuel.NumeroTour < 10)
                         {
                             rep = carteCinq.FirstOrDefault(p => p.Type == TypeDeCarte.DEFENSE);
                         }
@@ -147,7 +147,7 @@ namespace IA
                     if (carteOk.Count() > 1)
                     {
                         var repList = carteOk;
-                        if (this.tourActuel.NumeroTour < 5)
+                        if (this.tourActuel.NumeroTour < 10)
                         {
                             // Type Defense
                             repList = carteOk.Where(p => p.Type == TypeDeCarte.ATTAQUE);
@@ -159,7 +159,7 @@ namespace IA
                         
                         if (repList.Count() == 0)
                         {
-                            if (this.tourActuel.NumeroTour < 5)
+                            if (this.tourActuel.NumeroTour < 10)
                             {
                                 // Type Defense
                                 repList = carteOk.Where(p => p.Type == TypeDeCarte.DEFENSE);
@@ -190,6 +190,12 @@ namespace IA
                     {
                         rep = carteOk.First();
                     }
+                }
+                if (this.listPersos.Any(p => p.Attaque >= this.listMonstres.MaxBy(m => m.Vie).Vie)){
+
+                        var malus = this.GetMalus();
+                        choix = malus.Item1;
+                        cible = malus.Item2;
                 }
                 // Si attaque ou pas de valeur haute
                 var carteMeh = this.pioche.Where(p => p.Valeur >2);
@@ -265,7 +271,7 @@ namespace IA
                         {
                             case TypeDeCarte.ATTAQUE:
                                 {
-                                    if ((this.pioche[i].Valeur < -20) && (this.listPersos[j].Attaque > 20))
+                                    if ((this.pioche[i].Valeur < -18) && (this.listPersos[j].Attaque > 20))
                                     {
                                         action = "malus";
                                         carteMalus = i;
@@ -275,7 +281,7 @@ namespace IA
                                 break;
                             case TypeDeCarte.DEFENSE:
                                 {
-                                    if ((this.pioche[i].Valeur < -20) && (this.listPersos[j].Def > 20))
+                                    if ((this.pioche[i].Valeur < -18) && (this.listPersos[j].Def > 20))
                                     {
                                         action = "malus";
                                         carteMalus = i;
@@ -285,7 +291,7 @@ namespace IA
                                 break;
                             case TypeDeCarte.SAVOIR:
                                 {
-                                    if ((this.pioche[i].Valeur < -20) && (this.listPersos[j].Savoir > 20))
+                                    if ((this.pioche[i].Valeur < -23) && (this.listPersos[j].Savoir > 20))
                                     {
                                         action = "malus";
                                         carteMalus = i;
