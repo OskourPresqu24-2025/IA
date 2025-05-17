@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IA.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -80,9 +81,18 @@ namespace IA
 
         }
 
+
         public void AttenteDebutTour()
         {
-                
+            var messageServer = this.RecevoirMessage();
+            if (messageServer.StartsWith("DEBUT_TOUR")) {
+                if (messageServer.Equals("FIN"))
+                {
+                    return;
+                }  
+                throw new InvalidOperationException(messageServer);
+            }
+                    
         }
 
         public int DegatsDR()
@@ -90,6 +100,40 @@ namespace IA
             this.EnvoyerMessage("DEGATS");
             string messageServer = this.RecevoirMessage();
             return Convert.ToInt32(messageServer);
+        }
+
+        public bool Piocher(int numeroCarte, int idJoueur)
+        {
+            return true; 
+        }      
+
+        public bool Utiliser(TypeDeCarte type) {
+            return true;
+        }
+
+        public bool Attaquer (int idMonstre)
+        {
+            return true;
+        }
+
+        public IEnumerable<Perso> GetJoueurs()
+        {
+            return Enumerable.Empty<Perso>();
+        } 
+
+        public Joueur GetJoueur()
+        {
+            return new Joueur();
+        }
+
+        public IEnumerable<Monstre> GetMonstres()
+        {
+            return Enumerable.Empty<Monstre>();
+        }
+
+        public IEnumerable<Carte> GetPioche()
+        {
+            return Enumerable.Empty<Carte>();
         }
     }
 }

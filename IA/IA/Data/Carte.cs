@@ -3,14 +3,14 @@
     public class Carte
     {
         private int valeur;
-        private Type type;
+        private TypeDeCarte type;
 
         public int Valeur
         {
             get => valeur;
             set => valeur = value;
         }
-        public Type Type
+        public TypeDeCarte Type
         {
             get => type;
             set => type = value;

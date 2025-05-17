@@ -1,6 +1,6 @@
 ﻿namespace IA.Data
 {
-    public enum Type
+    public enum TypeDeCarte
     {
         ATTAQUE,
         DEFENSE,

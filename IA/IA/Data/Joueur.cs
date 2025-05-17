@@ -2,12 +2,12 @@
 {
     public class Joueur : Perso
     {
-        private Dictionary<Type, List<Carte>> valeurCarte;
+        private Dictionary<TypeDeCarte, List<Carte>> valeurCarte;
         private int position;
 
         public Joueur()
         {
-            valeurCarte = new Dictionary<Type, List<Carte>>();
+            valeurCarte = new Dictionary<TypeDeCarte, List<Carte>>();
         }
 
         public int Position
@@ -16,7 +16,7 @@
             set => position = value;
         }
 
-        public int ValeurCartes(Type type)
+        public int ValeurCartes(TypeDeCarte type)
         {
             int res = 0;
             double multiplicateur = 0.0;
