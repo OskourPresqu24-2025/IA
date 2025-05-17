@@ -1,4 +1,5 @@
 ﻿using IA.Data;
+using System;
 
 namespace IA
 {
@@ -57,6 +58,15 @@ namespace IA
                 }
 
                 this.NouvellePhase();
+
+
+                //Utilisation de la défense pour tanker l'attaque de la dame en rouge
+                if (this.tourActuel.Phase == 15)
+                {
+                    this.server.Utiliser(TypeDeCarte.DEFENSE);
+                }
+                this.JouerNuit();
+
                 this.JouerPhase();
             }
         }
@@ -141,24 +151,23 @@ namespace IA
 
         public void NouvelleNuit()
         {
-            string action = "";
             this.joueur = this.server.GetJoueur();
             this.listMonstres = this.server.GetMonstres().ToList();
-            int monstreAttaque = -1;
+        }
 
-            //Utilisation de la défense pour tanker l'attaque de la dame en rouge
-            if (this.tourActuel.Phase == 15)
-            {
-                this.server.Utiliser(TypeDeCarte.DEFENSE);
-            }
+        public void JouerNuit()
+        {
+            string action = "";
+            int monstreAttaque = -1;
 
             //Prend le malus si il est elevé et totalement utilisé par les stats d'un adversaire
             int carteMalus = -1;
             int idAdversaire = -1;
             for (int i = 0; i < this.pioche.Count; i++)
             {
-                for (int j = 0; this.listPersos.Count > 0; j++) {
-                    if(j != this.numJoueur)
+                for (int j = 0; this.listPersos.Count > 0; j++)
+                {
+                    if (j != this.numJoueur)
                     {
                         switch (this.pioche[i].Type)
                         {
@@ -202,7 +211,7 @@ namespace IA
             //Attaque si on peut oneshot le mob ou si il est low
             for (int i = 0; i < this.listMonstres.Count; i++)
             {
-                if (((this.joueur.TotalAttaque() > listMonstres[i].Vie)&&(listMonstres[i].Vie!=0)) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
+                if (((this.joueur.TotalAttaque() > listMonstres[i].Vie) && (listMonstres[i].Vie != 0)) || (listMonstres[i].Vie < (listMonstres[i].Vie * (30 / 100))))
                 {
                     action = "attaquer";
                     monstreAttaque = i;
@@ -222,8 +231,8 @@ namespace IA
             switch (action)
             {
                 case "malus": this.server.Piocher(carteMalus, idAdversaire); break;
-                case "attaquer":this.server.Attaquer(monstreAttaque);break;
-                case "prendre savoir":this.server.Utiliser(TypeDeCarte.SAVOIR);break;
+                case "attaquer": this.server.Attaquer(monstreAttaque); break;
+                case "prendre savoir": this.server.Utiliser(TypeDeCarte.SAVOIR); break;
                 case "pioche": this.server.Piocher(this.ChoixPioche(), numJoueur); break;
             }
         }
