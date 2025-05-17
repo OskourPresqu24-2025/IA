@@ -9,8 +9,7 @@ namespace IA
         private List<Perso> listPersos;
         private List<Monstre> listMonstres;
         private int attaqueLune;
-        private int tour;
-        private int phase;
+        private Tour tourActuel;
         private Server server;
         private int numJoueur;
         private Joueur joueur;
@@ -34,6 +33,7 @@ namespace IA
         public void Jouer()
         {
             this.numJoueur = this.server.ConnexionPartie();
+            this.JouerPhase();
 
         }
 
@@ -41,5 +41,26 @@ namespace IA
         {
             //A faire tour 1-1
         }
+
+        public void JouerPhase()
+        {
+            // A appeler a chaque tour
+        }
+
+        public void NouveauTour()
+        {
+            // A appeler a chaque tour
+        }
+
+        public void NouveauJour()
+        {
+            // A appeler a chaque jour
+        }
+
+        public void NouvellePhase()
+        {
+            // A appeler a chaque phase
+        }
+
     }
 }
